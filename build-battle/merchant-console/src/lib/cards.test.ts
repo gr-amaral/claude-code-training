@@ -140,21 +140,30 @@ describe("parseCardInput", () => {
     expect(parseCardInput({ ...valid, currency: "JPY" })).toEqual({
       error: "Currency must be USD, EUR, or GBP.",
     })
-    expect(parseCardInput({ ...valid, currency: "usd" })).toHaveProperty("error")
+    expect(parseCardInput({ ...valid, currency: "usd" })).toHaveProperty(
+      "error",
+    )
   })
 
   it("rejects a currency that differs from the merchant's", () => {
     // mch_04 settles in GBP.
     const result = parseCardInput({ ...valid, merchantId: "mch_04" })
     expect(result).toHaveProperty("error")
-    expect(parseCardInput({ ...valid, merchantId: "mch_04", currency: "GBP" }))
-      .toHaveProperty("input.currency", "GBP")
+    expect(
+      parseCardInput({ ...valid, merchantId: "mch_04", currency: "GBP" }),
+    ).toHaveProperty("input.currency", "GBP")
   })
 
   it("rejects a missing, blank, or overlong nickname", () => {
-    expect(parseCardInput({ ...valid, nickname: undefined })).toHaveProperty("error")
-    expect(parseCardInput({ ...valid, nickname: "   " })).toHaveProperty("error")
-    expect(parseCardInput({ ...valid, nickname: "x".repeat(41) })).toHaveProperty("error")
+    expect(parseCardInput({ ...valid, nickname: undefined })).toHaveProperty(
+      "error",
+    )
+    expect(parseCardInput({ ...valid, nickname: "   " })).toHaveProperty(
+      "error",
+    )
+    expect(
+      parseCardInput({ ...valid, nickname: "x".repeat(41) }),
+    ).toHaveProperty("error")
   })
 
   it("allowlists the category", () => {

@@ -22,9 +22,11 @@ export function cardById(id: string): Card | null {
  * so a double submit or a retry after a timeout cannot mint two cards; the
  * number is not returned a second time.
  */
-export function createCard(
-  input: CardInput,
-): { card: Card; number: string | null; created: boolean } {
+export function createCard(input: CardInput): {
+  card: Card
+  number: string | null
+  created: boolean
+} {
   if (input.requestId) {
     const existing = store.cards.find((c) => c.requestId === input.requestId)
     if (existing) return { card: existing, number: null, created: false }
@@ -54,8 +56,10 @@ export function createCard(
   return { card, number, created: true }
 }
 
-const EVENT_FOR: Record<Exclude<CardStatus, "active">, "frozen" | "cancelled"> =
-  { frozen: "frozen", cancelled: "cancelled" }
+const EVENT_FOR: Record<
+  Exclude<CardStatus, "active">,
+  "frozen" | "cancelled"
+> = { frozen: "frozen", cancelled: "cancelled" }
 
 /** Moves a card through the state machine, or explains why it cannot. */
 export function transitionCard(

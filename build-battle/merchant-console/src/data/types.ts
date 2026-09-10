@@ -1,11 +1,7 @@
 export type Currency = "USD" | "EUR" | "GBP"
 
 export type PaymentStatus =
-  | "authorized"
-  | "captured"
-  | "refunded"
-  | "failed"
-  | "disputed"
+  "authorized" | "captured" | "refunded" | "failed" | "disputed"
 
 export type DisputeStatus = "needs_response" | "under_review" | "won" | "lost"
 
@@ -15,12 +11,7 @@ export type CardStatus = "active" | "frozen" | "cancelled"
 
 /** Merchant category the card is locked to at issue time. */
 export type CardCategory =
-  | "any"
-  | "advertising"
-  | "software"
-  | "contractors"
-  | "travel"
-  | "office"
+  "any" | "advertising" | "software" | "contractors" | "travel" | "office"
 
 export interface CardEvent {
   type: "issued" | "frozen" | "unfrozen" | "cancelled"

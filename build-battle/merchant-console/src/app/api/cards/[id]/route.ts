@@ -18,7 +18,10 @@ export async function PATCH(
   try {
     body = await request.json()
   } catch {
-    return NextResponse.json({ error: "Request body must be JSON." }, { status: 400 })
+    return NextResponse.json(
+      { error: "Request body must be JSON." },
+      { status: 400 },
+    )
   }
 
   const status = (body as { status?: unknown } | null)?.status

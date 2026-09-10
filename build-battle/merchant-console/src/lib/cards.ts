@@ -41,7 +41,11 @@ export function luhnCheckDigit(partial: string): number {
   let sum = 0
   // Walk right to left; doubling starts on the rightmost digit of the partial
   // because the check digit will occupy the final position.
-  for (let i = partial.length - 1, double = true; i >= 0; i--, double = !double) {
+  for (
+    let i = partial.length - 1, double = true;
+    i >= 0;
+    i--, double = !double
+  ) {
     let digit = Number(partial[i])
     if (double) {
       digit *= 2
