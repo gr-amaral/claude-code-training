@@ -1,5 +1,6 @@
 import { merchants } from "./merchants"
 import {
+  Card,
   Currency,
   Dispute,
   Payment,
@@ -52,7 +53,7 @@ const REASON_CODES = [
   "13.7 Cancelled Merchandise",
 ]
 
-const pad = (n: number, width = 6) => String(n).padStart(width, "0")
+export const pad = (n: number, width = 6) => String(n).padStart(width, "0")
 
 /** The anchor date. Fixed, so "the last 30 days" is stable across runs. */
 export const GENERATED_AT = new Date("2026-08-13T00:00:00.000Z")
@@ -148,7 +149,69 @@ export function generate() {
   }
 
   const payouts = generatePayouts(payments)
-  return { payments, refunds, disputes, payouts }
+  return { payments, refunds, disputes, payouts, cards: generateCards() }
+}
+
+/**
+ * Three fixture cards so the list, the spend bar, and a frozen row are
+ * visible before anyone issues one. Spend here is fixture data; cards issued
+ * at runtime start at zero and stay there. Only the last four is kept.
+ */
+function generateCards(): Card[] {
+  const daysAgo = (days: number) => {
+    const at = new Date(GENERATED_AT)
+    at.setUTCDate(at.getUTCDate() - days)
+    return at.toISOString()
+  }
+  const fixture = (
+    seq: number,
+    card: Omit<Card, "id" | "numberRef" | "last4" | "requestId">,
+  ): Card => ({
+    id: `card_${pad(seq)}`,
+    numberRef: `cardref_${pad(seq)}`,
+    last4: "4242",
+    requestId: null,
+    ...card,
+  })
+
+  return [
+    fixture(1, {
+      nickname: "Google Ads — Lumen",
+      merchantId: "mch_01",
+      category: "advertising",
+      limit: 250000,
+      spent: 87500,
+      currency: "USD",
+      status: "active",
+      createdAt: daysAgo(20),
+      events: [{ type: "issued", at: daysAgo(20) }],
+    }),
+    fixture(2, {
+      nickname: "Figma seats",
+      merchantId: "mch_04",
+      category: "software",
+      limit: 40000,
+      spent: 36000,
+      currency: "GBP",
+      status: "active",
+      createdAt: daysAgo(12),
+      events: [{ type: "issued", at: daysAgo(12) }],
+    }),
+    fixture(3, {
+      nickname: "Contractor — Berlin",
+      merchantId: "mch_05",
+      category: "contractors",
+      limit: 120000,
+      spent: 15000,
+      currency: "EUR",
+      status: "frozen",
+      createdAt: daysAgo(7),
+      events: [
+        { type: "issued", at: daysAgo(7) },
+        { type: "frozen", at: daysAgo(2) },
+      ],
+    }),
+  ]
 }
 
 function generatePayouts(payments: Payment[]): Payout[] {

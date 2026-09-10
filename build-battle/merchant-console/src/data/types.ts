@@ -11,6 +11,47 @@ export type DisputeStatus = "needs_response" | "under_review" | "won" | "lost"
 
 export type PayoutStatus = "paid" | "in_transit" | "pending"
 
+export type CardStatus = "active" | "frozen" | "cancelled"
+
+/** Merchant category the card is locked to at issue time. */
+export type CardCategory =
+  | "any"
+  | "advertising"
+  | "software"
+  | "contractors"
+  | "travel"
+  | "office"
+
+export interface CardEvent {
+  type: "issued" | "frozen" | "unfrozen" | "cancelled"
+  /** ISO 8601, always UTC. */
+  at: string
+}
+
+/**
+ * A virtual card. The full number is never stored: only the last four and an
+ * opaque reference survive creation.
+ */
+export interface Card {
+  id: string
+  nickname: string
+  merchantId: string
+  category: CardCategory
+  /** Integer minor units. Never a float. */
+  limit: number
+  /** Integer minor units, same currency as the limit. */
+  spent: number
+  currency: Currency
+  last4: string
+  numberRef: string
+  status: CardStatus
+  /** Client-supplied idempotency key; a reuse returns the existing card. */
+  requestId: string | null
+  /** ISO 8601, always UTC. */
+  createdAt: string
+  events: CardEvent[]
+}
+
 export interface Merchant {
   id: string
   name: string
