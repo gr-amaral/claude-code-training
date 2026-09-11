@@ -158,40 +158,20 @@ export function generate() {
 }
 
 /**
- * Three fixture cards so the list, the spend bar, and a frozen row are
- * visible before anyone issues one. Spend here is fixture data; cards issued
- * at runtime start at zero and stay there. Only the last four is kept.
+ * Two fixture cards so the spend bar and a frozen row are visible before
+ * anyone issues one. Spend here is fixture data; cards issued at runtime start
+ * at zero and stay there. Only the last four is kept.
  */
 function generateCards(): Card[] {
-  const daysAgo = (days: number) => {
-    const at = new Date(GENERATED_AT)
-    at.setUTCDate(at.getUTCDate() - days)
-    return at.toISOString()
-  }
-  const fixture = (
-    seq: number,
-    card: Omit<Card, "id" | "numberRef" | "last4" | "requestId">,
-  ): Card => ({
-    id: `card_${pad(seq)}`,
-    numberRef: `cardref_${pad(seq)}`,
-    last4: "4242",
-    requestId: null,
-    ...card,
-  })
-
+  const issuedAt = new Date(GENERATED_AT)
+  issuedAt.setUTCDate(issuedAt.getUTCDate() - 12)
+  const at = issuedAt.toISOString()
+  const base = { last4: "4242", requestId: null, createdAt: at }
   return [
-    fixture(1, {
-      nickname: "Google Ads — Lumen",
-      merchantId: "mch_01",
-      category: "advertising",
-      limit: 250000,
-      spent: 87500,
-      currency: "USD",
-      status: "active",
-      createdAt: daysAgo(20),
-      events: [{ type: "issued", at: daysAgo(20) }],
-    }),
-    fixture(2, {
+    {
+      ...base,
+      id: `card_${pad(1)}`,
+      numberRef: `cardref_${pad(1)}`,
       nickname: "Figma seats",
       merchantId: "mch_04",
       category: "software",
@@ -199,10 +179,12 @@ function generateCards(): Card[] {
       spent: 36000,
       currency: "GBP",
       status: "active",
-      createdAt: daysAgo(12),
-      events: [{ type: "issued", at: daysAgo(12) }],
-    }),
-    fixture(3, {
+      events: [{ type: "issued", at }],
+    },
+    {
+      ...base,
+      id: `card_${pad(2)}`,
+      numberRef: `cardref_${pad(2)}`,
       nickname: "Contractor — Berlin",
       merchantId: "mch_05",
       category: "contractors",
@@ -210,12 +192,11 @@ function generateCards(): Card[] {
       spent: 15000,
       currency: "EUR",
       status: "frozen",
-      createdAt: daysAgo(7),
       events: [
-        { type: "issued", at: daysAgo(7) },
-        { type: "frozen", at: daysAgo(2) },
+        { type: "issued", at },
+        { type: "frozen", at },
       ],
-    }),
+    },
   ]
 }
 

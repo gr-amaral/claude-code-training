@@ -5,8 +5,7 @@
       "name": "merchant-console",
       "runtimeExecutable": "npm",
       "runtimeArgs": ["run", "dev", "--prefix", "build-battle/merchant-console"],
-      "port": 3000,
-      "autoPort": true
+      "port": 3000
     }
   ]
 }

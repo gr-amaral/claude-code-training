@@ -31,6 +31,8 @@ type MerchantOption = { id: string; name: string; currency: Currency }
 
 type Issued = { card: Card; number: string | null }
 
+const LABEL = "text-sm font-medium text-gray-900 dark:text-gray-50"
+
 /**
  * Issue a virtual card. The form posts to /api/cards, which validates every
  * field again; this component only shapes the request. The full number is
@@ -149,26 +151,20 @@ export function IssueCardDialog({
             </DrawerHeader>
             <DrawerBody className="space-y-4">
               <dl className="space-y-3 text-sm">
-                <div>
-                  <dt className="text-gray-500">Nickname</dt>
-                  <dd className="mt-0.5 text-gray-900 dark:text-gray-50">
-                    {issued.card.nickname}
-                  </dd>
-                </div>
-                <div>
-                  <dt className="text-gray-500">Card number</dt>
-                  <dd className="mt-0.5 font-mono text-lg tracking-wider text-gray-900 dark:text-gray-50">
-                    {issued.number
-                      ? issued.number.replace(/(\d{4})(?=\d)/g, "$1 ")
-                      : `•••• ${issued.card.last4}`}
-                  </dd>
-                </div>
-                <div>
-                  <dt className="text-gray-500">Spend limit</dt>
-                  <dd className="mt-0.5 tabular-nums text-gray-900 dark:text-gray-50">
-                    {formatMoney(issued.card.limit, issued.card.currency)}
-                  </dd>
-                </div>
+                <dt className="text-gray-500">Nickname</dt>
+                <dd className="text-gray-900 dark:text-gray-50">
+                  {issued.card.nickname}
+                </dd>
+                <dt className="text-gray-500">Card number</dt>
+                <dd className="font-mono text-lg tracking-wider text-gray-900 dark:text-gray-50">
+                  {issued.number
+                    ? issued.number.replace(/(\d{4})(?=\d)/g, "$1 ")
+                    : `•••• ${issued.card.last4}`}
+                </dd>
+                <dt className="text-gray-500">Spend limit</dt>
+                <dd className="tabular-nums text-gray-900 dark:text-gray-50">
+                  {formatMoney(issued.card.limit, issued.card.currency)}
+                </dd>
               </dl>
             </DrawerBody>
             <DrawerFooter>
@@ -187,10 +183,7 @@ export function IssueCardDialog({
             </DrawerHeader>
             <DrawerBody className="space-y-4">
               <div>
-                <label
-                  htmlFor="card-nickname"
-                  className="text-sm font-medium text-gray-900 dark:text-gray-50"
-                >
+                <label htmlFor="card-nickname" className={LABEL}>
                   Nickname
                 </label>
                 <Input
@@ -206,10 +199,7 @@ export function IssueCardDialog({
               </div>
 
               <div>
-                <label
-                  htmlFor="card-merchant"
-                  className="text-sm font-medium text-gray-900 dark:text-gray-50"
-                >
+                <label htmlFor="card-merchant" className={LABEL}>
                   Merchant
                 </label>
                 <Select value={merchantId} onValueChange={setMerchantId}>
@@ -227,10 +217,7 @@ export function IssueCardDialog({
               </div>
 
               <div>
-                <label
-                  htmlFor="card-category"
-                  className="text-sm font-medium text-gray-900 dark:text-gray-50"
-                >
+                <label htmlFor="card-category" className={LABEL}>
                   Merchant category lock
                 </label>
                 <Select
@@ -252,10 +239,7 @@ export function IssueCardDialog({
 
               <div className="grid grid-cols-3 gap-3">
                 <div className="col-span-2">
-                  <label
-                    htmlFor="card-limit"
-                    className="text-sm font-medium text-gray-900 dark:text-gray-50"
-                  >
+                  <label htmlFor="card-limit" className={LABEL}>
                     Spend limit
                   </label>
                   <Input
@@ -271,9 +255,7 @@ export function IssueCardDialog({
                   />
                 </div>
                 <div>
-                  <span className="text-sm font-medium text-gray-900 dark:text-gray-50">
-                    Currency
-                  </span>
+                  <span className={LABEL}>Currency</span>
                   <p
                     className="mt-1.5 rounded-md border border-gray-300 bg-gray-50 px-2.5 py-2 text-sm text-gray-700 dark:border-gray-800 dark:bg-gray-900 dark:text-gray-300"
                     aria-live="polite"
