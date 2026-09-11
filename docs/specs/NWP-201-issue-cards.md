@@ -5,7 +5,7 @@
 
 **Ticket:** [NWP-201](../tickets/NWP-201.md)
 **Author:** Gabriel Amaral
-**Status:** building
+**Status:** done
 
 ## Problem
 
