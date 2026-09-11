@@ -12,10 +12,8 @@ import {
 } from "./cards"
 
 /**
- * The rules that make a card shippable rather than merely visible: numbers
- * live on the 4242 test BIN with a real check digit, cancelled is terminal,
- * and the server rejects what the ticket says it must reject with the limit
- * held in integer minor units.
+ * Numbers live on the 4242 test BIN with a real check digit, cancelled is
+ * terminal, and the server rejects what the ticket says it must.
  */
 
 describe("luhnCheckDigit", () => {
