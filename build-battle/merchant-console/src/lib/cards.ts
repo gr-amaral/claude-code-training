@@ -3,10 +3,8 @@ import { CardCategory, CardStatus, Currency } from "@/data/types"
 import { parseAmountToMinorUnits } from "./money"
 
 /**
- * Pure card rules: number generation on the test BIN, masking, the status
- * state machine, and the input parser behind POST /api/cards. Nothing here
- * touches the store, and nothing here imports Node-only modules, because the
- * transition table is also read by client components.
+ * Pure card rules. No store access and no Node-only imports, because client
+ * components read the transition table from here.
  */
 
 export const TEST_BIN = "4242"
@@ -62,11 +60,7 @@ export function isLuhnValid(number: string): boolean {
   return luhnCheckDigit(partial) === Number(number[number.length - 1])
 }
 
-/**
- * A 16-digit number on the 4242 test BIN with a valid check digit. Random
- * digits come from the platform CSPRNG; the modulo bias on a 32-bit source is
- * negligible for a test BIN.
- */
+/** 16 digits on the 4242 test BIN with a valid check digit (CSPRNG body). */
 export function generateCardNumber(): string {
   const bodyLength = CARD_NUMBER_LENGTH - TEST_BIN.length - 1
   const random = globalThis.crypto.getRandomValues(new Uint32Array(bodyLength))
@@ -102,9 +96,8 @@ export interface CardInput {
 type ParseResult = { input: CardInput } | { error: string }
 
 /**
- * Validates the body of POST /api/cards. The client is not trusted: every
- * field is checked against an allowlist, and the limit arrives as a string
- * and is converted to minor units exactly once, here.
+ * Validates POST /api/cards. Every field is allowlisted; the limit arrives as
+ * a string and is converted to minor units exactly once, here.
  */
 export function parseCardInput(body: unknown): ParseResult {
   if (typeof body !== "object" || body === null || Array.isArray(body)) {
@@ -176,11 +169,7 @@ export function parseCardInput(body: unknown): ParseResult {
   }
 }
 
-/**
- * Whole-number percentage of the limit that has been spent, clamped to 100.
- * A ratio for a progress bar, not an amount: both inputs are integer minor
- * units of the same currency, and nothing here is formatted or stored.
- */
+/** Bar ratio, clamped to 100. Both inputs are minor units of one currency. */
 export function spendPercent(spent: number, limit: number): number {
   if (limit <= 0) return 0
   return Math.min(100, Math.floor((spent * 100) / limit))
