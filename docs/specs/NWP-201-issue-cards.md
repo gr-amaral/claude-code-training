@@ -21,7 +21,7 @@ Paths are under `build-battle/merchant-console/`.
 - `src/data/merchants.ts` — `merchantById()` returns `undefined` when unknown; each merchant has a `currency` nothing checks yet.
 - `src/lib/money.ts` — `parseAmountToMinorUnits` (boundary converter), `formatMoney`. `src/lib/dates.ts` — `formatInZone`.
 - `src/app/api/payments/export/route.ts` — the route pattern: `as const` allowlist, `{ value } | { error }` validator, `NextResponse.json({ error }, { status: 400 })`. No POST handler exists anywhere.
-- `src/app/payments/page.tsx`, `src/app/payments/[id]/page.tsx` — server components reading the store; inline `colSpan` empty state; `Field` grid and timeline `<ol>`. Next 15 `params` are promises.
+- `src/app/payments/page.tsx`, `[id]/page.tsx` — server components reading the store; inline empty state; `Field` grid and timeline. Next 15 `params` are promises.
 - `src/app/payments/export-dialog.tsx` — form dialog on `src/components/Drawer.tsx`; there is no `Dialog.tsx` despite `.claude/rules/components.md`.
 - `src/components/ui/payments/StatusBadge.tsx` — three `Record<AnyStatus, …>` maps to extend.
 - `src/data/queries.ts:81` — defect: amounts sorted with `String().localeCompare`. One-line fix in passing.
@@ -64,21 +64,6 @@ Add a `cards` slice to the store, a pure `src/lib/cards.ts` (Luhn generator on t
 3. **Nav, list, dialog, detail** — done when a card issued in the browser appears masked in the list and opens in detail.
 4. **Stretch** — done when freeze/unfreeze changes the badge without navigation, the 90% fixture shows amber, cancel confirms then offers no actions.
 5. **Ship** — lint, test, `/ship-ready`, PR.
-
-## Verification
-
-| Criterion | Proof |
-| --- | --- |
-| Issue a card | browser: submit, card in list |
-| Card list / detail | `/cards` columns; `/cards/<id>` record, spend bar, history |
-| Generated numbers | `cards.test.ts`: `^4242`, 16 digits, Luhn, not constant |
-| Reveal once | number only in the 201 body; `Card` has no number field; dialog resets on close |
-| Server validation, state machine | `cards.test.ts` + curl 400/409 |
-
-## Risks
-
-- `store` is cached on `globalThis`; restart the dev server once.
-- `src/lib/cards.ts` is imported by client components: no `node:crypto`; use `globalThis.crypto`.
 
 ## Out of scope
 
