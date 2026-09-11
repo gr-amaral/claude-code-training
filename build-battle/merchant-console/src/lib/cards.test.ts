@@ -105,75 +105,63 @@ describe("parseCardInput", () => {
     expect(a).toEqual(b)
   })
 
-  it("rejects a missing or unknown merchant", () => {
-    expect(parseCardInput({ ...valid, merchantId: "" })).toEqual({
-      error: "Choose a merchant.",
-    })
-    expect(parseCardInput({ ...valid, merchantId: "mch_99" })).toEqual({
-      error: "Unknown merchant.",
-    })
-  })
-
-  it("rejects a zero or negative limit", () => {
-    expect(parseCardInput({ ...valid, limit: "0" })).toEqual({
-      error: "Spend limit must be greater than zero.",
-    })
-    expect(parseCardInput({ ...valid, limit: "-5" })).toHaveProperty("error")
-  })
-
-  it("accepts exactly 5,000,000 minor units and rejects one cent more", () => {
-    // 50,000.00 is the ceiling; 50,000.01 is 5,000,001 minor units.
-    const atMax = parseCardInput({ ...valid, limit: "50000" })
-    expect(atMax).toHaveProperty("input.limit", MAX_LIMIT_MINOR)
-    expect(parseCardInput({ ...valid, limit: "50000.01" })).toEqual({
-      error: "Spend limit cannot exceed 5,000,000 minor units.",
-    })
-  })
-
-  it("rejects a limit that is not a decimal string", () => {
-    expect(parseCardInput({ ...valid, limit: "abc" })).toHaveProperty("error")
+  it.each([
+    ["missing merchant", { merchantId: "" }, "Choose a merchant."],
+    ["unknown merchant", { merchantId: "mch_99" }, "Unknown merchant."],
+    ["zero limit", { limit: "0" }, "Spend limit must be greater than zero."],
+    ["negative limit", { limit: "-5" }, "Enter a spend limit like 250.00."],
+    ["non-decimal limit", { limit: "abc" }, "Enter a spend limit like 250.00."],
     // A number would be ambiguous between cents and dollars; only strings.
-    expect(parseCardInput({ ...valid, limit: 25000 })).toHaveProperty("error")
-  })
-
-  it("rejects currencies outside USD, EUR, GBP, case-sensitively", () => {
-    expect(parseCardInput({ ...valid, currency: "JPY" })).toEqual({
-      error: "Currency must be USD, EUR, or GBP.",
-    })
-    expect(parseCardInput({ ...valid, currency: "usd" })).toHaveProperty(
-      "error",
-    )
-  })
-
-  it("rejects a currency that differs from the merchant's", () => {
+    ["numeric limit", { limit: 25000 }, "Enter a spend limit like 250.00."],
+    [
+      "one cent over the ceiling",
+      { limit: "50000.01" },
+      "Spend limit cannot exceed 5,000,000 minor units.",
+    ],
+    [
+      "currency outside the allowlist",
+      { currency: "JPY" },
+      "Currency must be USD, EUR, or GBP.",
+    ],
+    [
+      "lowercase currency",
+      { currency: "usd" },
+      "Currency must be USD, EUR, or GBP.",
+    ],
     // mch_04 settles in GBP.
-    const result = parseCardInput({ ...valid, merchantId: "mch_04" })
-    expect(result).toHaveProperty("error")
-    expect(
-      parseCardInput({ ...valid, merchantId: "mch_04", currency: "GBP" }),
-    ).toHaveProperty("input.currency", "GBP")
+    [
+      "currency differing from the merchant",
+      { merchantId: "mch_04" },
+      "Halcyon Studio settles in GBP; the card must use the same currency.",
+    ],
+    ["blank nickname", { nickname: "   " }, "Give the card a nickname."],
+    [
+      "overlong nickname",
+      { nickname: "x".repeat(41) },
+      "Nickname must be 40 characters or fewer.",
+    ],
+    [
+      "unknown category",
+      { category: "gambling" },
+      "Unknown merchant category.",
+    ],
+  ])("rejects a %s", (_, patch, error) => {
+    expect(parseCardInput({ ...valid, ...patch })).toEqual({ error })
   })
 
-  it("rejects a missing, blank, or overlong nickname", () => {
-    expect(parseCardInput({ ...valid, nickname: undefined })).toHaveProperty(
-      "error",
-    )
-    expect(parseCardInput({ ...valid, nickname: "   " })).toHaveProperty(
-      "error",
+  it("accepts exactly 5,000,000 minor units and a matching merchant currency", () => {
+    expect(parseCardInput({ ...valid, limit: "50000" })).toHaveProperty(
+      "input.limit",
+      MAX_LIMIT_MINOR,
     )
     expect(
-      parseCardInput({ ...valid, nickname: "x".repeat(41) }),
-    ).toHaveProperty("error")
-  })
-
-  it("allowlists the category", () => {
-    expect(parseCardInput({ ...valid, category: "gambling" })).toEqual({
-      error: "Unknown merchant category.",
-    })
-    expect(parseCardInput({ ...valid, category: "software" })).toHaveProperty(
-      "input.category",
-      "software",
-    )
+      parseCardInput({
+        ...valid,
+        merchantId: "mch_04",
+        currency: "GBP",
+        category: "software",
+      }),
+    ).toMatchObject({ input: { currency: "GBP", category: "software" } })
   })
 
   it("never throws on a non-object body", () => {

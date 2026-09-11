@@ -144,9 +144,7 @@ export function IssueCardDialog({
                 </span>
               </DrawerTitle>
               <DrawerDescription className="text-sm">
-                {issued.number
-                  ? "Copy the number now. It is shown once and cannot be recovered."
-                  : "This card was already issued; the number was shown at the time."}
+                Copy the number now. It is shown once and cannot be recovered.
               </DrawerDescription>
             </DrawerHeader>
             <DrawerBody className="space-y-4">
@@ -264,11 +262,6 @@ export function IssueCardDialog({
                   </p>
                 </div>
               </div>
-              <p className="text-sm text-gray-500">
-                {merchant
-                  ? `${merchant.name} settles in ${merchant.currency}, so the card does too.`
-                  : "The currency follows the merchant."}
-              </p>
 
               {error && (
                 <p

@@ -30,7 +30,6 @@ export default async function CardDetail({
   if (!card) notFound()
 
   const merchant = merchantById(card.merchantId)!
-  const remaining = Math.max(0, card.limit - card.spent)
 
   return (
     <div className="p-4 sm:p-6">
@@ -88,15 +87,6 @@ export default async function CardDetail({
           <span className="tabular-nums">
             {formatMoney(card.limit, card.currency)}
           </span>
-        </Field>
-        <Field label="Remaining">
-          <span className="tabular-nums">
-            {formatMoney(remaining, card.currency)}
-          </span>
-        </Field>
-        <Field label="Currency">{card.currency}</Field>
-        <Field label="Reference">
-          <span className="font-mono text-sm">{card.numberRef}</span>
         </Field>
         <Field label="Created (UTC)">
           <span className="font-mono text-sm">{card.createdAt}</span>

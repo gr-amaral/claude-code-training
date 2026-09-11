@@ -3,28 +3,18 @@ import { spendLevel, spendPercent } from "@/lib/cards"
 import { formatMoney } from "@/lib/money"
 import { cx } from "@/lib/utils"
 
-// Tailwind only sees literal class names, so the width is bucketed to 5%.
+// Tailwind only sees literal class names, so the width is bucketed to 10%.
 const WIDTHS = [
   "w-0",
-  "w-[5%]",
   "w-[10%]",
-  "w-[15%]",
   "w-[20%]",
-  "w-[25%]",
   "w-[30%]",
-  "w-[35%]",
   "w-[40%]",
-  "w-[45%]",
   "w-1/2",
-  "w-[55%]",
   "w-[60%]",
-  "w-[65%]",
   "w-[70%]",
-  "w-[75%]",
   "w-[80%]",
-  "w-[85%]",
   "w-[90%]",
-  "w-[95%]",
   "w-full",
 ] as const
 
@@ -69,7 +59,7 @@ export function SpendBar({
           className={cx(
             "h-full rounded-full transition-all",
             FILL[level],
-            WIDTHS[Math.round(percent / 5)],
+            WIDTHS[Math.round(percent / 10)],
           )}
         />
       </div>
